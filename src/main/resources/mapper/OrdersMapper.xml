@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.crm.dao.OrdersDao">
+
+    <select id="queryAll" resultType="com.example.crm.entity.Orders">
+        select * from orders
+    </select>
+    <delete id="delById" >
+        delete from orders where ordersId=#{ordersId}
+    </delete>
+    <delete id="delByIds">
+        delete from orders where ordersId in (${ids})
+    </delete>
+    <update id="update">
+        update orders
+        <set>
+            /*如果field参数的值为goods,则修改该字段的值*/
+            <if test="field=='goods'">
+                goods=#{value}
+            </if>
+            <if test="field=='amount'">
+                amount=#{value}
+            </if>
+
+        </set>
+        where ordersId=#{ordersId}
+    </update>
+    <insert id="add" parameterType="com.example.crm.entity.Orders">
+        insert into orders values (0,#{customerId},#{goods},#{amount},#{ordersDate})
+    </insert>
+    <select id="customerOrdersCount" resultType="com.example.crm.entity.CustomerOrdersCount">
+        select customerName , count(ordersId) ordersCount from customer c inner JOIN orders o on c.customerId=o.customerId group by c.customerId
+    </select>
+    <select id="customerOrdersAmounts" resultType="com.example.crm.entity.CustomerOrdersAmounts">
+  select customerName name,sum(amount) value from customer c ,orders o where c.customerId=o.customerId group by c.customerId
+    </select>
+</mapper>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>销售记录添加</title>
+</head>
+<body>
+<link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+<form class="layui-form" action="">
+  <div class="layui-form-item">
+    <label class="layui-form-label">客户</label>
+    <div class="layui-input-inline">
+      <select id="cus" name="customerId" lay-verify="required">
+
+
+      </select>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">销售渠道</label>
+    <div class="layui-input-inline">
+      <input type="text" name="source" required  lay-verify="required" placeholder="请输入销售渠道" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">商品信息</label>
+    <div class="layui-input-inline">
+      <input type="text" name="note" required  lay-verify="required" placeholder="请输入商品信息" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">是否下单</label>
+    <div class="layui-input-inline">
+      <input type="radio" name="state" value="1" title="已登记">
+      <input type="radio" name="state" value="0" title="未登记" checked>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">记录时间</label>
+    <div class="layui-input-inline">
+      <input type="text"  name="recordDate" lay-verify="required" class="layui-input" id="test1">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+
+<script src="../layui/layui.js" charset="utf-8"></script>
+<script>
+  //Demo
+  layui.use('form', function(){
+    var form = layui.form;
+    var $=layui.jquery;
+    var laydate = layui.laydate;
+
+    $(function () {
+      //得到所有用户
+      $.ajax({
+        url:"/Customer/queryAll",
+        success:function (res) {
+          var cus= res.data;
+          for(var i=0;i<cus.length;i++){
+            //得到客户id和name
+            var customerId= cus[i].customerId;
+            var customerName= cus[i].customerName;
+            //使用jquery创建<option>标签
+            var $opt=$("<option value='"+customerId+"'>"+customerName+"</option>");
+            //将创建好的option标签加入到select标签中
+            $("#cus").append($opt);
+          }
+          //重新加载表单
+          form.render();
+        }
+      });
+    });
+    //执行一个laydate实例
+    laydate.render({
+      elem: '#test1' //指定元素
+    });
+
+    //监听提交
+    form.on('submit(formDemo)', function(data){
+
+      $.ajax({
+        url:"/Record/add",
+        data:data.field,
+        success:function (){
+          window.parent.location.reload()
+        }
+      });
+      return false;
+    });
+  });
+</script>
+</body>
+</html>

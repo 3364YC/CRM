@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.crm.dao.RecordDao">
+
+    <select id="queryAll" resultType="com.example.crm.entity.Record">
+        select * from record
+    </select>
+    <delete id="delById" >
+        delete from record where recordId=#{recordId}
+    </delete>
+    <delete id="delByIds">
+        delete from record where recordId in (${ids})
+    </delete>
+    <update id="update">
+        update record
+        <set>
+            /*如果field参数的值为customerName,则修改该字段的值*/
+            <if test="field=='source'">
+               source=#{value}
+            </if>
+            <if test="field=='note'">
+                note=#{value}
+            </if>
+            <if test="field=='state'">
+                state=#{value}
+            </if>
+        </set>
+        where recordId=#{recordId}
+    </update>
+    <update id="change">
+     update record set state=1 where recordId=#{recordId}
+    </update>
+    <insert id="add" parameterType="com.example.crm.entity.Record">
+        insert into record values (0,#{customerId},#{source},#{note},#{state},#{recordDate})
+    </insert>
+</mapper>
